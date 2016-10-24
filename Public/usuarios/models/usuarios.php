@@ -15,30 +15,23 @@ class usuariosModel extends Connection {
 		foreach ($objeto as $key => $value) {
 			$datos[$key] = $this -> escapar($value);
 		}
-
-		$datos['pass'] = $this -> encriptar($datos['pass']);
-
-		$sql = "	SELECT
-						mail
-					FROM
-						usuarios
-					WHERE
-						mail = '".$datos['mail']."'
-					OR
-						tel = '".$datos['tel']."'";
-		$result = $this -> queryArray($sql);
-
-		if ($result['total'] > 0) {
-			$result = 0;
-		} else {
-			$sql = "	INSERT INTO
+	
+	// Valida que exista el paciente
+		if (empty($datos['id'])) {
+			$sql = "INSERT INTO
+						pacientes(nombre, sexo)
+					VALUES
+						('".$datos['nombre']."', '".$datos['sexo']."')";
+			$datos['id'] = $this -> insert_id($sql);
+		}
+		
+		$sql = "	INSERT INTO
 							usuarios
 							(nombre, mail, pass, tel, tipo)
 						VALUES
 							('".$datos['nombre']."', '".$datos['mail']."', '".$datos['pass']."', '".$datos['tel']."', ".$datos['tipo'].")";
 			// return $sql;
 			$result = $this -> query($sql);
-		}
 
 		return $result;
 	}

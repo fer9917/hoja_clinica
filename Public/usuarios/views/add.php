@@ -17,7 +17,7 @@
 								<input type="number" min="0" disabled="1" class="form-control" id="id">
 							</div>
 						</div>
-						<div class="col-md-7">
+						<div class="col-md-5">
 							<div class="form-group">
 								<label><strong>Nombre</strong></label>
 								<input required="1" type="text" class="form-control" id="nombre" placeholder="Juan Perez">
@@ -37,6 +37,12 @@
 							<div class="form-group">
 								<label>Edad</label>
 								<input type="number" min="0" class="form-control" id="edad" placeholder="23">
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label>Peso</label>
+								<input type="number" min="0" class="form-control" id="peso" placeholder="70">
 							</div>
 						</div>
 					</div>
