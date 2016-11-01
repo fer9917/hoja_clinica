@@ -7,7 +7,7 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
 	$servidor = 'localhost';
 	$usuariobd = 'root';
 	$clavebd = 'root';
-	$bd = 'punto_venta';
+	$bd = 'hoja_clinica';
 } else {
 	$servidor = 'mysql.hostinger.mx';
 	$usuariobd = 'u767839180_jaraz';

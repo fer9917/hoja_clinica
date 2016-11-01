@@ -27,7 +27,7 @@
 		$sql = "	SELECT
 						id, nombre, tipo, status
 					FROM
-						usuarios
+						usuarios_hoja
 					WHERE
 						mail = '".$datos['usuario']."'
 					OR

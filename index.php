@@ -26,8 +26,10 @@ date_default_timezone_set('America/Mexico_City');
 	<link rel="stylesheet" href="System/plugins/jquery-ui/jquery-ui.min.css" type="text/css" />
 <!-- bootstrap-select -->
 	<link rel="stylesheet" href="System/plugins/bootstrap-select-1.9.3/dist/css/bootstrap-select.min.css">
-<!--  dataTables  -->
+<!-- dataTables  -->
     <link rel="stylesheet" href="System/plugins/dataTable/css/datatablesboot.min.css">
+<!-- typeahead -->
+    <link rel="stylesheet" href="System/plugins/typeahead/typeahead.css">
 
 <!--/////////////// ***** ------			 FIN CSS 			------ ***** ///////////////-->
 
@@ -45,9 +47,11 @@ date_default_timezone_set('America/Mexico_City');
 	<script src="System/plugins/bootstrap-select-1.9.3/dist/js/bootstrap-select.min.js"></script>
 <!-- notify -->
 	<script src="System/plugins/notify.js"></script>
-<!--  dataTables  -->
+<!-- dataTables  -->
 	<script src="System/plugins/dataTable/js/datatables.min.js"></script>
 	<script src="System/plugins/dataTable/js/dataTables.bootstrap.min.js"></script>
+<!-- typeahead -->
+	<script src="System/plugins/typeahead/typeahead.js"></script>
 
 <!-- Systema -->
 	<script src="Public/usuarios/js/usuarios.js"></script>

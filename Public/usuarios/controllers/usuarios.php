@@ -16,7 +16,7 @@ class usuarios extends Common {
 		$this -> usuariosModel = new usuariosModel();
 	}
 
-///////////////// ******** ---- 	vista_principal		------ ************ //////////////////
+///////////////// ******** ---- 	vista_principal			------ ************ //////////////////
 //////// Carga la vista
 
 	function add($objeto) {
@@ -30,28 +30,38 @@ class usuarios extends Common {
 
 ///////////////// ******** ---- 	FIN	vista_principal		------ ************ //////////////////
 
-///////////////// ******** ---- 		guardar		------ ************ //////////////////
+///////////////// ******** ---- 		guardar				------ ************ //////////////////
 //////// Guarda la informacion en la DB
-	// Como parametros recibe:
-		// mail -> mail del usuario
-		// pass -> pass del usuario
-		// tel -> numero de telefono
-		// nombre -> nombre del usuario
+	// Como parametros puede recibir:
+		// analisis -> string
+		// diagnostico -> string
+		// edad -> int
+		// fecha -> dateTimeLocal
+		// frecuencia_car -> int
+		// frecuencia_res -> int
+		// glicemia -> int
+		// id -> int
+		// impresion -> string
+		// motivo_consulta -> string
+		// nombre -> string
+		// num_expediente -> int
+		// objetivo -> string
+		// peso -> decimal
+		// plan -> string
+		// servicio -> string
+		// sexo -> 1 -> hombre, 2 -> mujer
+		// subjetivo -> string
+		// suturacion -> int
+		// temperatura -> int
+		// tension -> int
 
 	function guardar($objeto) {
 	// Si el objeto viene vacio(llamado desde el index) se le asigna el $_REQUEST que manda el Index
 	// Si no conserva su valor normal
 		$objeto = (empty($objeto)) ? $_REQUEST : $objeto;
-
-	// Valida que el correo o el numero de telefono no existan
-		$usuarios = $this -> usuariosModel -> listar($objeto);
-		if ($usuarios['total'] > 0) {
-			$resp['status'] = 2;
-			echo json_encode($resp);
-
-			return 0;
-		}
-
+		
+		$objeto['fecha'] = str_replace('T', ' ', $objeto['fecha']) . ':00';
+		
 	// Guarda los datos en la DB
 		$resp['result'] = $this -> usuariosModel -> guardar($objeto);
 
@@ -61,24 +71,32 @@ class usuarios extends Common {
 		echo json_encode($resp);
 	}
 
-///////////////// ******** ---- 		FIN guardar		------ ************ //////////////////
+///////////////// ******** ---- 		FIN guardar				------ ************ //////////////////
 
-///////////////// ******** ---- 		listar			------ ************ //////////////////
+///////////////// ******** ---- 		listar					------ ************ //////////////////
 //////// Consulta los usuarios y los agrega a la div
 	// Como parametros recibe:
 		// div -> div donde se cargara el contenido
 		// id -> id del usuario
+		// json -> 1 -> si tenie que devolver un json, 0 -> todo normal
 
 	function listar($objeto) {
-		// Si el objeto viene vacio(llamado desde el index) se le asigna el $_REQUEST que manda el Index
-		// Si no conserva su valor normal
+	// Si el objeto viene vacio(llamado desde el index) se le asigna el $_REQUEST que manda el Index
+	// Si no conserva su valor normal
 		$objeto = (empty($objeto)) ? $_REQUEST : $objeto;
 
-		// Consulta los usuarios
+	// Consulta los usuarios
 		$usuarios = $this -> usuariosModel -> listar($objeto);
 		$usuarios = $usuarios['rows'];
+	
+	// Valida si se debe de regresar un json en lugar de cargar la vista
+		if ($objeto['json'] == 1) {
+			echo json_encode($usuarios);
 
-		// Carga la vista donde se agrega un recuerdo
+			return 0;
+		}
+		
+	// Carga la vista donde se agrega un recuerdo
 		require ('Public/usuarios/views/listar.php');
 	}
 
@@ -225,7 +243,45 @@ class usuarios extends Common {
 		echo json_encode($resp);
 	}
 
-///////////////// ******** ---- 		FIN activar				------ ************ //////////////////
+///////////////// ******** ---- 			FIN activar				------ ************ //////////////////
+
+///////////////// ******** ---- 			imprimir_hoja			------ ************ //////////////////
+//////// Imprime la hoja de con los datos de la consulta
+	// Como parametros puede recibir:
+		// analisis -> string
+		// diagnostico -> string
+		// edad -> int
+		// fecha -> dateTimeLocal
+		// frecuencia_car -> int
+		// frecuencia_res -> int
+		// glicemia -> int
+		// id -> int
+		// impresion -> string
+		// motivo_consulta -> string
+		// nombre -> string
+		// num_expediente -> int
+		// objetivo -> string
+		// peso -> decimal
+		// plan -> string
+		// servicio -> string
+		// sexo -> 1 -> hombre, 2 -> mujer
+		// subjetivo -> string
+		// suturacion -> int
+		// temperatura -> int
+		// tension -> int
+		
+	function imprimir_hoja($objeto) {
+	// Si el objeto viene vacio(llamado desde el index) se le asigna el $_REQUEST que manda el Index
+	// Si no conserva su valor normal
+		$objeto = (empty($objeto)) ? $_REQUEST : $objeto;
+		
+		$objeto['sexo'] = ($objeto['sexo'] == 1) ? 'Hombre' : 'Mujer' ;
+		
+	// Carga la vista donde se agrega un recuerdo
+		require ('Public/usuarios/views/imprimir_hoja.php');
+	}
+
+///////////////// ******** ---- 		FIN	imprimir_hoja			------ ************ //////////////////
 
 }
 ?>

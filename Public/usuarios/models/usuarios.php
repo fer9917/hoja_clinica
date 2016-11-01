@@ -3,12 +3,30 @@
  * @author Fer De La Cruz
  */
 class usuariosModel extends Connection {
-///////////////// ******** ---- 		guardar		------ ************ //////////////////
+///////////////// ******** ---- 			guardar				------ ************ //////////////////
 //////// Guarda la informacion en la DB
-	// Como parametros recibe:
-		// url -> Direccion de la imagen
-		// titulo -> el titulo de la imagen
-		// descripcion -> descripcion de la imagen
+	// Como parametros puede recibir:
+		// analisis -> string
+		// diagnostico -> string
+		// edad -> int
+		// fecha -> dateTimeLocal
+		// frecuencia_car -> int
+		// frecuencia_res -> int
+		// glicemia -> int
+		// id -> int
+		// impresion -> string
+		// motivo_consulta -> string
+		// nombre -> string
+		// num_expediente -> int
+		// objetivo -> string
+		// peso -> decimal
+		// plan -> string
+		// servicio -> string
+		// sexo -> 1 -> hombre, 2 -> mujer
+		// subjetivo -> string
+		// suturacion -> int
+		// temperatura -> int
+		// tension -> int
 
 	function guardar($objeto) {
 	// Funcion anti Hack
@@ -25,42 +43,60 @@ class usuariosModel extends Connection {
 			$datos['id'] = $this -> insert_id($sql);
 		}
 		
-		$sql = "	INSERT INTO
-							usuarios
-							(nombre, mail, pass, tel, tipo)
-						VALUES
-							('".$datos['nombre']."', '".$datos['mail']."', '".$datos['pass']."', '".$datos['tel']."', ".$datos['tipo'].")";
-			// return $sql;
-			$result = $this -> query($sql);
+		$sql = "INSERT INTO
+					hojas
+					(id_paciente, edad, diagnostico, servicio, num_expediente, fecha, peso, talla, frecuencia_car, 
+					frecuencia_res, temperatura, tension_art, saturacion, glicemia, motivo_consulta, subjetivo, objetivo, analisis, 
+					impresion, plan)
+				VALUES
+					('".$datos['id']."', '".$datos['edad']."', '".$datos['diagnostico']."', '".$datos['servicio']."', 
+					'".$datos['num_expediente']."', '".$datos['fecha']."', '".$datos['peso']."', '".$datos['talla']."', 
+					'".$datos['frecuencia_car']."', '".$datos['frecuencia_res']."', '".$datos['temperatura']."', 
+					'".$datos['tension_art']."', '".$datos['saturacion']."', '".$datos['glicemia']."', '".$datos['motivo_consulta']."', 
+					'".$datos['subjetivo']."', '".$datos['objetivo']."', '".$datos['analisis']."', '".$datos['impresion']."', 
+					'".$datos['plan']."')";
+		// return $sql;
+		$result = $this -> query($sql);
 
 		return $result;
 	}
 
-///////////////// ******** ---- 		FIN guardar		------ ************ //////////////////
+///////////////// ******** ---- 			FIN guardar				------ ************ //////////////////
 
-///////////////// ******** ---- 		listar		------ ************ //////////////////
+///////////////// ******** ---- 			listar					------ ************ //////////////////
 //////// Consulta los usuarios y los agrega a la div
 	// Como parametros recibe:
-	// div -> div donde se cargara el contenido
-	// id -> id del usuario
+		// div -> div donde se cargara el contenido
+		// id -> id del usuario
+		// json -> 1 -> si tenie que devolver un json, 0 -> todo normal
 
 	function listar($objeto) {
-		// Filtra por ID si existe
-		$condicion .= (!empty($objeto['id']) && empty($objeto['id_excluido'])) ? ' AND id = '.$objeto['id'] : '';
-		// Excluye el ID del usuario(esto nos sirve al momento de editar)
-		$condicion .= (!empty($objeto['id_excluido'])) ? ' AND id != '.$objeto['id'] : '';
-		// Filtra por el tipo si existe, si no, no muestra los super usuarios(-1)
-		$condicion .= (!empty($objeto['tipo'])) ? ' AND tipo = '.$objeto['tipo'] : ' AND tipo != -1';
-		// Filtra por mail y/o telefono
-		$condicion .= (!empty($objeto['mail']) || !empty($objeto['tel'])) ? ' AND (mail = \''.$objeto['id'].'\' OR tel = \''.$objeto['tel'].'\')' : '';
+	// Filtra por ID si existe
+		$condicion .= (!empty($objeto['id']) && empty($objeto['id_excluido'])) ? ' AND p.id = '.$objeto['id'] : '';
+	// Excluye el ID del usuario(esto nos sirve al momento de editar)
+		$condicion .= (!empty($objeto['id_excluido'])) ? ' AND p.id != '.$objeto['id'] : '';
+		
+	// Excluye el ID del usuario(esto nos sirve al momento de editar)
+		$condicion .= (!empty($objeto['palabras'])) ? ' AND p.id != '.$objeto['id'] : '';
 
-		$sql = "
-				SELECT
-					*
+		$sql = "SELECT
+					CONCAT('[', p.id, '] ', p.nombre) AS nombre_paciente, p.id, p.nombre, p.sexo, h.edad, 
+					h.diagnostico, h.servicio, h.num_expediente, h.peso, h.talla, h.frecuencia_car, h.frecuencia_res, 
+					h.temperatura, h.tension_art, h.saturacion, h.glicemia, h.motivo_consulta, h.subjetivo, h.objetivo, 
+					h.analisis, h.impresion, h.plan
 				FROM
-					usuarios
+					pacientes p
+				LEFT JOIN
+						hojas h
+					ON
+						h.id_paciente = p.id
 				WHERE
-					1=1".$condicion;
+					1=1".
+				$condicion."
+				GROUP BY
+					p.id
+				ORDER BY
+					p.nombre ASC";
 		$result = $this -> queryArray($sql);
 
 		return $result;

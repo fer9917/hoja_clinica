@@ -1,6 +1,6 @@
 var usuarios = {
-///////////////// ******** ---- 		add		------ ************ //////////////////
-//////// Carga la vista para agregar un recuerdo
+///////////////// ******** ---- 			add				------ ************ //////////////////
+//////// Carga la vista para agregar un paciente
 	// Como parametros recibe:
 		// div -> div donde se cargara el contenido
 		// funcion -> guardar, editar
@@ -18,9 +18,36 @@ var usuarios = {
 		}).done(function(resp) {
 			console.log('---------> done add');
 			console.log(resp);
-
+			
 			$('#' + $objeto['div']).html(resp);
 			$('.selectpicker').selectpicker('refresh');
+			
+			var $pacientes = usuarios.listar({
+				json : 1
+			});
+	
+			$('#nombre').typeahead({
+				hint : true,
+				highlight : true,
+				minLength : 1
+			}, {
+				name : 'nombre_paciente',
+				displayKey : 'nombre_paciente',
+				source : function(query, process) {
+					 return process($pacientes);
+				}
+			}).on('typeahead:selected', function(obj, datum) {
+				$objeto['id'] = datum['id'];
+				$objeto['json'] = 1;
+				
+				var $paciente = usuarios.listar($objeto);
+				
+				$.each($paciente[0], function(index, value) {
+					$('#' + index).val(value);
+				});
+				
+				$('.selectpicker').selectpicker('refresh');
+			});
 		}).fail(function(resp) {
 			console.log('----------> fail add');
 			console.log(resp);
@@ -49,6 +76,7 @@ var usuarios = {
 		console.log('---------> $objeto guardar');
 		console.log($objeto);
 		
+		
 		var $datos = {};
 		var $requeridos = [];
 		var error = 0;
@@ -65,7 +93,7 @@ var usuarios = {
 			var id = this.id;
 
 		// Valida que el campo no este vacio si es requerido
-			if (required == 'required' && valor.length <= 0) {
+			if (required == 'required' && valor.length <= 0 && id) {
 				error = 1;
 
 				$requeridos.push(id);
@@ -96,13 +124,19 @@ var usuarios = {
 		
 	/* FIN Validaciones
 	=============================================================== */
-
+		
+		console.log('---------> datos guardar');
+		console.log($datos);
+		
+		usuarios.imprimir_hoja({div: 'div_impresion', datos:$datos});
+		
+		return 0;
 	// Loader en el boton OK
 		var $btn = $('#btn_guardar_hoja');
 		$btn.button('loading');
 
 		$.ajax({
-			data : $objeto,
+			data : $datos,
 			url : 'ajax.php?c=usuarios&f=guardar',
 			type : 'post',
 			dataType : 'json',
@@ -112,20 +146,6 @@ var usuarios = {
 
 			$btn.button('reset');
 
-		// Error: Manda un mensaje con el error
-			if (resp['status'] == 2) {
-				var $mensaje = 'El correo y/o telefono ya existen';
-
-				$('#btn_guardar').notify($mensaje, {
-					position : "top center",
-					autoHide : true,
-					autoHideDelay : 4000,
-					className : 'error',
-				});
-
-				return 0;
-			}
-
 		// Todo bien
 			var $mensaje = 'Datos guardado';
 			$.notify($mensaje, {
@@ -134,7 +154,9 @@ var usuarios = {
 				autoHideDelay : 4000,
 				className : 'success',
 			});
-		
+			
+			usuarios.imprimir_hoja({div: 'div_impresion', datos:$datos});
+			
 		// Limpia los campos
 			$('#agregar_usuarios').click();
 		}).fail(function(resp) {
@@ -143,43 +165,55 @@ var usuarios = {
 
 			$btn.button('reset');
 
-		// Error: Manda un mensaje con el error
-			if (resp['status'] == 2) {
-				var $mensaje = 'Error al guardar los datos';
-
-				$('#btn_guardar_hoja').notify($mensaje, {
-					position : "top left",
-					autoHide : true,
-					autoHideDelay : 4000,
-					className : 'error',
-				});
-
-				return 0;
-			}
+			var $mensaje = 'Error al guardar los datos';
+			$.notify($mensaje, {
+				position : "top left",
+				autoHide : true,
+				autoHideDelay : 4000,
+				className : 'error',
+			});
 		});
 	},
 
 ///////////////// ******** ---- 		FIN guardar		------ ************ //////////////////
 
-///////////////// ******** ---- 		listar		------ ************ //////////////////
+///////////////// ******** ---- 		listar			------ ************ //////////////////
 //////// Consulta los usuarios y los agrega a la div
 	// Como parametros recibe:
-		// div -> div donde se cargara el contenido	
+		// div -> div donde se cargara el contenido
+		// json -> 1 -> si tenie que devolver un json, 0 -> todo normal
 
 	listar : function($objeto) {
 		console.log('----------> $objeto listar');
 		console.log($objeto);
-
+		
+		var $return = '';
+		
+	// Valida si se debe de devolver un json o cargar la vista
+		$tipo = ($objeto['json'] == 1) ? 'json' : 'html' ;
+		
+		console.log('----------> $tipor');
+		console.log($tipo);
+		
 		$.ajax({
 			data : $objeto,
+            async: false,
 			url : 'ajax.php?c=usuarios&f=listar',
 			type : 'post',
-			dataType : 'html',
+			dataType : $tipo,
 		}).done(function(resp) {
 			console.log('----------> reponse listar');
 			console.log(resp);
-
-			$('#' + $objeto['div']).html(resp);
+			
+		// Valida si se debe de devolver un json o cargar la vista
+			if($objeto['json'] == 1){
+				$return = resp;
+			}else{
+				$('#' + $objeto['div']).html(resp);
+			}
+			
+			console.log('----------> return done');
+			console.log($return);
 		}).fail(function(resp) {
 			console.log('----------> fail listar');
 			console.log(resp);
@@ -192,11 +226,15 @@ var usuarios = {
 				className : 'error',
 			});
 		});
+		
+		if($objeto['json'] == 1){
+			return $return;
+		}
 	},
 
 ///////////////// ******** ---- 		FIN listar		------ ************ //////////////////
 
-///////////////// ******** ---- 		editar		------ ************ //////////////////
+///////////////// ******** ---- 		editar			------ ************ //////////////////
 //////// Actualiza la informacion del usuario en la DB
 	// Como parametros recibe:
 		// form -> formulario con los datos a guardar
@@ -609,6 +647,88 @@ var usuarios = {
 		});
 	},
 
-///////////////// ******** ---- 			FIN activar		------ ************ //////////////////
+///////////////// ******** ---- 			FIN activar				------ ************ //////////////////
+
+///////////////// ******** ---- 			desbloquear				------ ************ //////////////////
+//////// Activa en campo bloqueado
+	// Como parametros recibe:
+		// id -> ID del campo
+		
+	desbloquear : function($objeto) {
+		console.log('actiaa');
+		console.log($objeto);
+		
+	  	$('#'+$objeto['id']).prop("disabled", false);
+	  	$('#'+$objeto['id']).prop("readonly", false);
+	},
+	
+///////////////// ******** ---- 			FIN desbloquear			------ ************ //////////////////
+
+///////////////// ******** ---- 			imprimir_hoja			------ ************ //////////////////
+//////// Imprime la hoja de con los datos de la consulta
+	// Como parametros puede recibir:
+		// analisis -> string
+		// diagnostico -> string
+		// edad -> int
+		// fecha -> dateTimeLocal
+		// frecuencia_car -> int
+		// frecuencia_res -> int
+		// glicemia -> int
+		// id -> int
+		// impresion -> string
+		// motivo_consulta -> string
+		// nombre -> string
+		// num_expediente -> int
+		// objetivo -> string
+		// peso -> decimal
+		// plan -> string
+		// servicio -> string
+		// sexo -> 1 -> hombre, 2 -> mujer
+		// subjetivo -> string
+		// suturacion -> int
+		// temperatura -> int
+		// tension -> int
+		
+	imprimir_hoja : function($objeto) {
+		console.log('----------> $objeto listar');
+		console.log($objeto);
+		
+		$.ajax({
+			data : $objeto,
+            async: false,
+			url : 'ajax.php?c=usuarios&f=imprimir_hoja',
+			type : 'post',
+			dataType : 'html',
+		}).done(function(resp) {
+			console.log('----------> reponse imprimir_hoja');
+			console.log(resp);
+			
+			$('#' + $objeto['div']).html(resp);
+			var ventana = window.open('', '_blank', 'width=207.874015748,height=10,leftmargin=0');
+			$(ventana).ready(function() {
+			//cargamos el HTML del objeto en la nueva ventana
+				ventana.document.write(resp);
+				ventana.document.close();
+				
+				setTimeout(closew,100);
+				function closew(){
+					ventana.print();  //imprimimos la ventana
+				}
+			});
+		}).fail(function(resp) {
+			console.log('----------> fail imprimir_hoja');
+			console.log(resp);
+
+			var $mensaje = 'Error al imprimir la hoja';
+			$.notify($mensaje, {
+				position : "top center",
+				autoHide : true,
+				autoHideDelay : 4000,
+				className : 'error',
+			});
+		});
+	},
+
+///////////////// ******** ---- 		FIN imprimir_hoja			------ ************ //////////////////
 
 }; 
