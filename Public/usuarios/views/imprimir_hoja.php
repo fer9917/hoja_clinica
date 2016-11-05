@@ -2,27 +2,26 @@
 // Valida que existan usuarios en los parametros seleccionadas
 	if (empty($objeto)) { ?>
 		<!-- <div align="center">
-			<h3><span class="label label-default">* Sin datos *</span></h3>
+			<h5><span class="label label-default">* Sin datos *</span></h5>
 		</div> --><?php
 		
 		// return 0;
 	} 
 ?>
-
 <link rel="stylesheet" href="System/plugins/bootstrap/dist/css/bootstrap-theme.min.css" type="text/css" />
 <link rel="stylesheet" href="System/plugins/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
 <div class="row">
 	<div class="col-md-8" align="center">
-		<h2>Hoja de evolución  clínica</h2>
+		<h3>Hoja de evolución  clínica</h3>
 	</div>
-	<div class="col-md-3" align="right" style="padding-top: 15px">
+	<div class="col-md-3" align="right" style="padding-top: 15px;">
 		Yahualica de González Gallo Jalisco, Av Hidalgo 65-a, Col centro
 	</div>
 </div>
-<table class="table">
+<table class="table" style="font-size: 10px; margin-bottom: -10px;">
 	<thead>
 		<tr>
-			<th><h3>Datos generales</h3></th>
+			<th><h5>Datos generales</h5></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -43,10 +42,10 @@
 		</tr>
     </tbody>
 </table>
-<table class="table">
+<table class="table" style="font-size: 10px; margin-bottom: -10px;">
 	<thead>
 		<tr>
-			<th><h3>Signos vitales</h3></th>
+			<th><h5>Signos vitales</h5></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -60,10 +59,10 @@
 		</tr>
     </tbody>
 </table>
-<table class="table">
+<table class="table" style="font-size: 10px;">
 	<thead>
 		<tr>
-			<th><h3>Hoja clinica</h3></th>
+			<th><h5>Hoja clinica</h5></th>
 		</tr>
 	</thead>
 	<tbody>

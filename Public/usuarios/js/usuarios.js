@@ -31,8 +31,8 @@ var usuarios = {
 				highlight : true,
 				minLength : 1
 			}, {
-				name : 'nombre_paciente',
-				displayKey : 'nombre_paciente',
+				name : 'nombre',
+				displayKey : 'nombre',
 				source : function(query, process) {
 					 return process($pacientes);
 				}
@@ -128,9 +128,6 @@ var usuarios = {
 		console.log('---------> datos guardar');
 		console.log($datos);
 		
-		usuarios.imprimir_hoja({div: 'div_impresion', datos:$datos});
-		
-		return 0;
 	// Loader en el boton OK
 		var $btn = $('#btn_guardar_hoja');
 		$btn.button('loading');
