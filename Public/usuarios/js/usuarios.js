@@ -76,7 +76,6 @@ var usuarios = {
 		console.log('---------> $objeto guardar');
 		console.log($objeto);
 		
-		
 		var $datos = {};
 		var $requeridos = [];
 		var error = 0;
@@ -172,9 +171,9 @@ var usuarios = {
 		});
 	},
 
-///////////////// ******** ---- 		FIN guardar		------ ************ //////////////////
+///////////////// ******** ---- 		FIN guardar				------ ************ //////////////////
 
-///////////////// ******** ---- 		listar			------ ************ //////////////////
+///////////////// ******** ---- 		listar					------ ************ //////////////////
 //////// Consulta los usuarios y los agrega a la div
 	// Como parametros recibe:
 		// div -> div donde se cargara el contenido
